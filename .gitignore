@@ -9,3 +9,4 @@ uBootEnv
 version.info
 *.versionDate
 installFiles/extra
+/backups/
