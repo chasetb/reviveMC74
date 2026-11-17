@@ -21,9 +21,9 @@ The Cloud endpoint currently serves a Let's Encrypt YR2 chain ending at ISRG Roo
 ## Gate before calling the route viable
 
 1. Complete the [modified boot and rollback checkpoints](https://github.com/chasetb/reviveMC74/issues/12#issuecomment-6955930652) and reach a usable Android 4.2.3 UI with normal-boot ADB. Confirm date/time, LAN/DNS reachability, and actual API level. No app installation is part of this research ticket.
-2. On this MC-74, without a token, log supported and enabled TLS protocols/ciphers, test a verified handshake to the intended HTTPS endpoint, and capture the negotiated protocol/cipher plus certificate chain and hostname result. A failed handshake or untrusted chain is a stop; do not fall back to LAN HTTP or disable verification.
+2. On this MC-74, without a token, log supported and enabled TLS protocols/ciphers, test a verified handshake to the intended HTTPS endpoint, and capture the negotiated protocol/cipher plus certificate chain and hostname result. If the stock shell lacks a suitable TLS client, a temporary signed, token-free API 17 probe APK may perform this check after the boot gate; record its package name and uninstall it afterward. A failed handshake or untrusted chain is a stop; do not fall back to LAN HTTP or disable verification.
 3. If a supported TLS provider or compatible HTTPS bridge is chosen later, repeat the test on-device with its exact endpoint and trust configuration. Only then provision a dedicated read-only identity if available, through a private channel, and verify one authenticated GET. Fail closed on 401, timeout, `unknown`, `unavailable`, or malformed JSON.
-4. Install the minimal API 17 APK only after the transport gate. Check physical door open/close against fresh reads and the `UNAVAILABLE` state on failure. Record package removal and token revocation as the app rollback. A host-side 401 and successful modern TLS handshake are insufficient evidence for this step.
+4. Install the final minimal API 17 status APK only after the transport gate. Check physical door open/close against fresh reads and the `UNAVAILABLE` state on failure. Record package removal and token revocation as the app rollback. A host-side 401 and successful modern TLS handshake are insufficient evidence for this step.
 
 ## Decision edge
 
