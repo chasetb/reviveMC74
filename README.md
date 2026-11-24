@@ -41,6 +41,45 @@ will be kept.
     git clone https://github.com/reviveMC74/reviveMC74.git
     cd reviveMC74
 
+### Ubuntu command-line tools
+
+On Ubuntu 26.04, the host used system `adb`, `fastboot`, `cpio`, and `gzip`/`gunzip`.
+For a fresh host, install those plus the build tools:
+
+    sudo apt update
+    sudo apt install adb fastboot cpio gzip git make gcc
+
+Two boot-image tool setups were used. The commands below reproduce them; the
+original shell commands were not logged. Neither setup installs `mkbootimg`
+system-wide.
+
+For this repository's `checkFiles` objective, build the upstream tools that
+provide the exact `mkbootimg` and `unpackbootimg` command names it expects:
+
+    git clone https://github.com/osm0sis/mkbootimg.git
+    cd mkbootimg
+    git checkout 17cea80bd5af64e45cdf9e263cad7555030e0e86
+    make CFLAGS='-ffunction-sections -O2 -fno-tree-vectorize'
+    export PATH="$PWD:$PATH"
+    cd /path/to/reviveMC74
+    python3 reviveMC74.py checkFiles
+
+The `-fno-tree-vectorize` flag was needed for this upstream revision with GCC 15
+and its `-Werror` build. The successful factory-recovery unit's separate boot
+image build instead used Ubuntu `mkbootimg` package version
+`1:34.0.5-12build1` locally, without installing it:
+
+    tool_dir=$(mktemp -d)
+    cd "$tool_dir"
+    apt download mkbootimg
+    dpkg-deb -x ./mkbootimg_*.deb .
+    export PATH="$PWD/usr/bin:$PATH"
+    command -v mkbootimg unpack_bootimg
+
+That Ubuntu package provides `unpack_bootimg` (with an underscore), so it does
+not by itself satisfy this repository's `unpackbootimg` check. Use the tool
+names required by the build procedure you are following.
+
 ### USB-A to USB-A Cable
 This cable is used for the ADB (Android Debug Bridge) connection between your computer,
 which is a USB Host (ie has a USB-A connector) and the MC74 USB-A host connector on
