@@ -118,7 +118,7 @@
       <div class="eyebrow">HOME OFFICE · PROTOTYPE</div>
       <h1>Home status</h1>
     </div>
-    <div class="mock-label"><strong>MOCK FEED · SIMULATED ONLINE</strong><br>Updated 14 sec ago · next check in 16 sec</div>
+    <div class="mock-label"><strong>MOCK FEED · SIMULATED ONLINE</strong><br>Updated 14 sec ago</div>
   </header>
 
   <main id="layout-a" class="layout layout-a" aria-label="Priority list layout">
@@ -215,7 +215,7 @@
       var keys = ['a', 'b', 'c'];
       var names = { a: 'A · Priority list', b: 'B · Dashboard board', c: 'C · Home zone map' };
       var match = window.location.search.match(/(?:^|[?&])variant=([abc])/i);
-      var current = match ? match[1].toLowerCase() : 'a';
+      var current = match ? match[1].toLowerCase() : 'c';
       var index = keys.indexOf(current);
       var layouts = document.getElementsByClassName('layout');
       var i;
