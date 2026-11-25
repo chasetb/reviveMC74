@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Home status — prototype</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: #081d30; color: #f4f7fa; font: 20px/1.3 Arial, sans-serif; }
+    body { padding: 18px 24px 100px; }
+    h1, h2, p { margin-top: 0; }
+    h1 { margin-bottom: 3px; font-size: 32px; line-height: 1.1; }
+    h2 { margin-bottom: 12px; font-size: 22px; }
+    .mast { display: table; width: 100%; margin-bottom: 14px; }
+    .mast > div { display: table-cell; vertical-align: middle; }
+    .eyebrow { margin-bottom: 6px; color: #8eb2cb; font-size: 12px; font-weight: bold; letter-spacing: 1.4px; }
+    .mock-label { text-align: right; color: #b5cad8; font-size: 14px; line-height: 1.55; }
+    .mock-label strong { color: #76d4b0; }
+    .card { border: 1px solid #345066; border-radius: 12px; background: #122b40; padding: 18px 20px; }
+    .alarm { background: #183b51; border-color: #4d7894; }
+    .alarm .value { display: block; margin: 2px 0 5px; font-size: 34px; font-weight: bold; }
+    .alarm .note, .muted { color: #b7cbd8; font-size: 15px; }
+    .section-title { display: table; width: 100%; margin-bottom: 9px; }
+    .section-title strong, .section-title span { display: table-cell; vertical-align: middle; }
+    .section-title strong { font-size: 22px; }
+    .section-title span { text-align: right; color: #b7cbd8; font-size: 14px; }
+    .door-row, .garage-row { display: table; width: 100%; border-top: 1px solid #294458; padding: 11px 0; }
+    .door-row:first-child, .garage-row:first-child { border-top: 0; }
+    .door-name, .door-state { display: table-cell; vertical-align: middle; }
+    .door-name { font-size: 20px; font-weight: bold; }
+    .door-state { text-align: right; }
+    .pill { display: inline-block; min-width: 94px; border-radius: 999px; padding: 6px 11px; text-align: center; font-size: 14px; font-weight: bold; }
+    .open { background: #572d2c; color: #ffd3c8; border: 1px solid #a6574c; }
+    .closed { background: #1c433d; color: #a7edd0; border: 1px solid #397c65; }
+    .room-label { color: #91aec2; font-size: 12px; font-weight: bold; letter-spacing: 1px; }
+    .metric { display: inline-block; min-width: 150px; padding: 8px 16px 5px 0; vertical-align: top; }
+    .metric strong { display: block; margin-top: 3px; font-size: 28px; }
+    .metric small { color: #b7cbd8; font-size: 15px; }
+
+    .layout { display: none; max-width: 1160px; margin: 0 auto; }
+    .layout-a .card { margin-bottom: 12px; }
+    .layout-a .alarm { padding: 16px 20px; }
+    .layout-a .alarm .value { display: inline-block; margin: 0 16px 0 0; vertical-align: middle; }
+    .layout-a .alarm .note { display: inline-block; vertical-align: middle; }
+    .layout-a .garage-pair { display: table; width: 100%; }
+    .layout-a .garage-pair .garage-cell { display: table-cell; width: 50%; padding: 0 7px; }
+    .layout-a .garage-pair .garage-cell:first-child { padding-left: 0; }
+    .layout-a .garage-pair .garage-cell:last-child { padding-right: 0; }
+
+    .layout-b .board { overflow: hidden; }
+    .layout-b .b-alarm { float: left; width: 39%; min-height: 236px; }
+    .layout-b .b-doors { float: right; width: 58%; min-height: 236px; }
+    .layout-b .b-garage { float: left; width: 58%; margin-top: 14px; }
+    .layout-b .b-office { float: right; width: 39%; margin-top: 14px; }
+    .layout-b .alarm .value { margin-top: 18px; font-size: 42px; }
+    .layout-b .garage-pair { display: table; width: 100%; }
+    .layout-b .garage-cell { display: table-cell; width: 50%; padding: 0 8px; }
+    .layout-b .garage-cell:first-child { padding-left: 0; }
+    .layout-b .garage-cell:last-child { padding-right: 0; }
+    .layout-b .garage-cell .card { height: 100%; min-height: 112px; padding: 15px; }
+    .layout-b .garage-cell .section-title strong { font-size: 18px; white-space: nowrap; }
+    .layout-b .garage-cell .section-title .pill { min-width: 78px; }
+    .layout-b .office .metric { min-width: 115px; padding-right: 12px; }
+    .layout-b .office .metric strong { font-size: 25px; }
+
+    .layout-c .alarm { margin-bottom: 14px; }
+    .plan { border: 2px solid #45677c; border-radius: 14px; padding: 12px; background: #0d263a; }
+    .plan-title { margin: 0 0 10px 4px; color: #9eb8ca; font-size: 13px; font-weight: bold; letter-spacing: 1.2px; }
+    .plan-main { display: table; width: 100%; border-spacing: 9px; margin: -9px; }
+    .zone { display: table-cell; width: 33.33%; height: 190px; border: 1px solid #496b7e; border-radius: 10px; padding: 15px; vertical-align: top; background: #142f43; }
+    .zone-entry { border-top: 6px solid #d77b5e; }
+    .zone-patio { border-top: 6px solid #d77b5e; }
+    .zone-garage { border-top: 6px solid #8ca9bd; }
+    .zone h2 { margin: 0 0 15px; color: #b7cbd8; font-size: 14px; letter-spacing: 1px; }
+    .zone .door-name { display: block; margin-bottom: 12px; }
+    .zone .pill { margin: 0 0 14px; }
+    .zone-garage .garage-line { display: table; width: 100%; padding: 11px 0; border-top: 1px solid #294458; }
+    .zone-garage .garage-line:first-of-type { border-top: 0; }
+    .zone-garage .garage-line span:first-child { display: table-cell; font-weight: bold; }
+    .zone-garage .garage-line span:last-child { display: table-cell; text-align: right; }
+    .plan-office { margin-top: 18px; border-left: 6px solid #d2ae63; }
+    .plan-office .metric { min-width: 170px; }
+
+    .switcher { position: fixed; z-index: 5; left: 50%; bottom: 12px; -webkit-transform: translateX(-50%); transform: translateX(-50%); display: table; width: auto; max-width: 96%; padding: 8px; border: 1px solid #7391a6; border-radius: 16px; background: #f2f5f7; color: #102b40; box-shadow: 0 4px 16px rgba(0,0,0,.5); white-space: nowrap; }
+    .switcher button, .switcher a { display: table-cell; vertical-align: middle; border: 0; border-radius: 10px; padding: 11px 14px; background: #dce5ea; color: #102b40; font: bold 18px Arial, sans-serif; text-decoration: none; text-align: center; }
+    .switcher button { min-width: 44px; cursor: pointer; }
+    .switch-label { display: table-cell; min-width: 184px; padding: 0 14px; vertical-align: middle; text-align: center; font-size: 13px; font-weight: bold; }
+    .switch-label span { display: block; color: #526c7c; font-size: 11px; font-weight: normal; }
+    .switcher .return { margin-left: 7px; background: #154964; color: #fff; font-size: 16px; }
+
+    @media (max-width: 700px) {
+      body { padding: 14px 14px 96px; font-size: 18px; }
+      h1 { font-size: 27px; }
+      .mast { margin-bottom: 10px; }
+      .mock-label { font-size: 12px; }
+      .layout-a .garage-pair, .layout-a .garage-pair .garage-cell { display: block; width: 100%; }
+      .layout-a .garage-pair .garage-cell { padding: 0; }
+      .layout-b .b-alarm, .layout-b .b-doors, .layout-b .b-garage, .layout-b .b-office { float: none; width: 100%; min-height: 0; margin: 0 0 11px; }
+      .layout-b .alarm .value { margin-top: 4px; font-size: 34px; }
+      .layout-b .garage-pair { display: block; }
+      .layout-b .garage-cell { display: block; width: 100%; padding: 0; margin-bottom: 9px; }
+      .layout-b .office .metric { min-width: 120px; }
+      .plan { padding: 8px; }
+      .plan-main, .zone { display: block; width: auto; height: auto; margin: 0; }
+      .zone { min-height: 125px; margin-bottom: 9px; }
+      .plan-office { margin-top: 8px; }
+      .switcher { bottom: 8px; padding: 6px; }
+      .switcher button, .switcher a { padding: 10px 9px; font-size: 15px; }
+      .switch-label { min-width: 112px; padding: 0 7px; font-size: 11px; }
+      .switch-label span { font-size: 10px; }
+      .switcher .return { margin-left: 4px; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="mast">
+    <div>
+      <div class="eyebrow">HOME OFFICE · PROTOTYPE</div>
+      <h1>Home status</h1>
+    </div>
+    <div class="mock-label"><strong>MOCK FEED · SIMULATED ONLINE</strong><br>Updated 14 sec ago · next check in 16 sec</div>
+  </header>
+
+  <main id="layout-a" class="layout layout-a" aria-label="Priority list layout">
+    <section class="card alarm">
+      <span class="room-label">ALARM</span>
+      <strong class="value">Disarmed</strong>
+      <span class="note">Sample state · status only</span>
+    </section>
+    <section class="card">
+      <div class="section-title"><strong>Open doors</strong><span>2 open</span></div>
+      <div class="door-row"><span class="door-name">Front door</span><span class="door-state"><span class="pill open">OPEN</span></span></div>
+      <div class="door-row"><span class="door-name">Patio door</span><span class="door-state"><span class="pill open">OPEN</span></span></div>
+    </section>
+    <section class="garage-pair" aria-label="Garage doors">
+      <div class="garage-cell"><div class="card"><div class="section-title"><strong>Garage A</strong><span class="pill closed">CLOSED</span></div><div class="muted">Separate door state</div></div></div>
+      <div class="garage-cell"><div class="card"><div class="section-title"><strong>Garage B</strong><span class="pill open">OPEN</span></div><div class="muted">Separate door state</div></div></div>
+    </section>
+    <section class="card">
+      <div class="section-title"><strong>Office</strong><span>Environment</span></div>
+      <div class="metric"><span class="room-label">TEMPERATURE</span><strong>72°F</strong></div>
+      <div class="metric"><span class="room-label">HUMIDITY</span><strong>38%</strong></div>
+    </section>
+  </main>
+
+  <main id="layout-b" class="layout layout-b" aria-label="Dashboard board layout">
+    <div class="board">
+      <section class="card alarm b-alarm">
+        <span class="room-label">ALARM</span>
+        <strong class="value">Disarmed</strong>
+        <span class="note">Sample state<br>status only</span>
+      </section>
+      <section class="card b-doors">
+        <div class="section-title"><strong>Open doors</strong><span>2 open</span></div>
+        <div class="door-row"><span class="door-name">Front door</span><span class="door-state"><span class="pill open">OPEN</span></span></div>
+        <div class="door-row"><span class="door-name">Patio door</span><span class="door-state"><span class="pill open">OPEN</span></span></div>
+      </section>
+      <section class="card b-garage">
+        <div class="section-title"><strong>Garage doors</strong><span>Each shown separately</span></div>
+        <div class="garage-pair">
+          <div class="garage-cell"><div class="card"><div class="section-title"><strong>Garage A</strong><span class="pill closed">CLOSED</span></div></div></div>
+          <div class="garage-cell"><div class="card"><div class="section-title"><strong>Garage B</strong><span class="pill open">OPEN</span></div></div></div>
+        </div>
+      </section>
+      <section class="card b-office">
+        <div class="section-title"><strong>Office</strong><span>Environment</span></div>
+        <div class="metric"><span class="room-label">TEMP</span><strong>72°F</strong></div>
+        <div class="metric"><span class="room-label">RH</span><strong>38%</strong></div>
+      </section>
+    </div>
+  </main>
+
+  <main id="layout-c" class="layout layout-c" aria-label="Home zone map layout">
+    <section class="card alarm">
+      <div class="section-title"><strong>Alarm · Disarmed</strong><span>2 non-garage doors open</span></div>
+    </section>
+    <section class="plan">
+      <p class="plan-title">HOME ZONES · SAMPLE STATUS</p>
+      <div class="plan-main">
+        <section class="zone zone-entry">
+          <h2>ENTRY</h2>
+          <span class="door-name">Front door</span>
+          <span class="pill open">OPEN</span>
+          <div class="muted">Non-garage door</div>
+        </section>
+        <section class="zone zone-patio">
+          <h2>LIVING · PATIO</h2>
+          <span class="door-name">Patio door</span>
+          <span class="pill open">OPEN</span>
+          <div class="muted">Non-garage door</div>
+        </section>
+        <section class="zone zone-garage">
+          <h2>GARAGE</h2>
+          <div class="garage-line"><span>Garage A</span><span class="pill closed">CLOSED</span></div>
+          <div class="garage-line"><span>Garage B</span><span class="pill open">OPEN</span></div>
+        </section>
+      </div>
+    </section>
+    <section class="card plan-office">
+      <div class="section-title"><strong>Office</strong><span>Environment</span></div>
+      <div class="metric"><span class="room-label">TEMPERATURE</span><strong>72°F</strong></div>
+      <div class="metric"><span class="room-label">HUMIDITY</span><strong>38%</strong></div>
+    </section>
+  </main>
+
+  <nav class="switcher" aria-label="Prototype layouts">
+    <button id="previous" type="button" aria-label="Previous layout">‹</button>
+    <div class="switch-label"><strong id="variant-name">Layout A</strong><span>PROTOTYPE · ← → to switch</span></div>
+    <button id="next" type="button" aria-label="Next layout">›</button>
+    <a class="return" href="sipreturn://open">Return to SIP</a>
+  </nav>
+
+  <script>
+    (function () {
+      var keys = ['a', 'b', 'c'];
+      var names = { a: 'A · Priority list', b: 'B · Dashboard board', c: 'C · Home zone map' };
+      var match = window.location.search.match(/(?:^|[?&])variant=([abc])/i);
+      var current = match ? match[1].toLowerCase() : 'a';
+      var index = keys.indexOf(current);
+      var layouts = document.getElementsByClassName('layout');
+      var i;
+      for (i = 0; i < layouts.length; i += 1) {
+        layouts[i].style.display = layouts[i].id === 'layout-' + current ? 'block' : 'none';
+      }
+      document.getElementById('variant-name').innerHTML = names[current];
+      document.body.className = 'variant-' + current;
+      function select(delta) {
+        var next = (index + delta + keys.length) % keys.length;
+        window.location.href = 'index.html?variant=' + keys[next];
+      }
+      document.getElementById('previous').onclick = function () { select(-1); };
+      document.getElementById('next').onclick = function () { select(1); };
+      document.addEventListener('keydown', function (event) {
+        var tag = event.target && event.target.tagName ? event.target.tagName.toLowerCase() : '';
+        if (tag === 'input' || tag === 'textarea' || event.target.isContentEditable) return;
+        if (event.keyCode === 37) { select(-1); }
+        if (event.keyCode === 39) { select(1); }
+      });
+    }());
+  </script>
+</body>
+</html>

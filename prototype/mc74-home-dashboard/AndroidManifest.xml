@@ -1,0 +1,19 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.revivemc74.prototype.dashboard">
+    <uses-sdk android:minSdkVersion="17" android:targetSdkVersion="17" />
+    <application
+        android:allowBackup="false"
+        android:label="Home Status Prototype"
+        android:theme="@android:style/Theme.Holo.NoActionBar">
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="Home Status Prototype"
+            android:screenOrientation="sensor">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
